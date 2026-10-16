@@ -1,53 +1,53 @@
-RULES = {
-    "1": {
-        "name": "Lampu mati",
-        "diagnosis": "Periksa lampu, sakelar, dan sambungan listrik."
-    },
-    "2": {
-        "name": "MCB trip",
-        "diagnosis": "Kemungkinan beban berlebih atau gangguan listrik."
-    },
-    "3": {
-        "name": "Lampu redup",
-        "diagnosis": "Kemungkinan tegangan rendah atau sambungan kurang baik."
-    },
-    "4": {
-        "name": "Perangkat panas",
-        "diagnosis": "Periksa ventilasi dan beban perangkat."
-    }
-}
+class Agent:
+    def __init__(self, name, skills):
+        self.name = name
+        self.skills = skills
+        self.completed_tasks = []
+
+    def can_do(self, task):
+        return task in self.skills
+
+    def perform(self, task):
+        self.completed_tasks.append(task)
+        return f"{self.name} menyelesaikan tugas: {task}"
 
 
-def diagnose(choices):
-    results = []
+class MultiAgentManager:
+    def __init__(self):
+        self.agents = [
+            Agent("Agent A", ["mengumpulkan data", "menganalisis data"]),
+            Agent("Agent B", ["menganalisis data", "membuat laporan"]),
+            Agent("Agent C", ["membuat laporan", "memeriksa hasil"])
+        ]
 
-    if "1" in choices and "2" in choices:
-        results.append(
-            "Kemungkinan gangguan rangkaian atau beban berlebih."
-        )
+    def assign_task(self, task):
+        for agent in self.agents:
+            if agent.can_do(task):
+                result = agent.perform(task)
+                print(result)
+                return
 
-    for choice in sorted(choices):
-        if choice in RULES and choice not in {"1", "2"}:
-            results.append(RULES[choice]["diagnosis"])
+        print(f"Tidak ada agen yang mampu mengerjakan: {task}")
 
-    if not results:
-        results.append("Gejala tidak valid atau belum dikenali.")
+    def run(self):
+        print("=== MULTI-AGENT SYSTEM ===")
 
-    return results
+        tasks = [
+            "mengumpulkan data",
+            "menganalisis data",
+            "membuat laporan",
+            "memeriksa hasil"
+        ]
+
+        for task in tasks:
+            print(f"\nManager memberikan tugas: {task}")
+            self.assign_task(task)
+
+        print("\n=== RINGKASAN TUGAS ===")
+        for agent in self.agents:
+            print(f"{agent.name}: {len(agent.completed_tasks)} tugas selesai")
 
 
-def run_expert_system():
-    print("=== ELECTRICAL EXPERT SYSTEM ===")
-
-    for key, rule in RULES.items():
-        print(f'{key}. {rule["name"]}')
-
-    raw = input("Masukkan nomor gejala (contoh: 1,2): ")
-    choices = {x.strip() for x in raw.split(",")}
-    choices &= set(RULES)
-
-    print("\n=== HASIL DIAGNOSIS ===")
-    for result in diagnose(choices):
-        print("-", result)
-
-    print("\nCatatan: Simulasi edukasi, bukan diagnosis keselamatan listrik.")
+def run_multi_agent():
+    manager = MultiAgentManager()
+    manager.run()

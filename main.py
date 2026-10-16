@@ -1,8 +1,8 @@
-from manager import run_expert_system
+from manager import run_search
 
 
 def main():
-    run_expert_system()
+    run_search()
 
 
 if __name__ == "__main__":
